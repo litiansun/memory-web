@@ -1,20 +1,21 @@
 import { useState } from 'react'
 import styles from './StudyPage.module.css'
+import { todayStr, getItemsForDate, getReviewDates } from '../storage.js'
 
-export default function StudyPage({ child, onBack, onReview }) {
+const REVIEW_LABELS = ['初次学习', '第1次复习', '第2次复习', '第3次复习', '第4次复习', '第5次复习', '第6次复习']
+
+export default function StudyPage({ child, onBack }) {
+  const today = todayStr()
+  const items = getItemsForDate(child.items, today)
   const [index, setIndex] = useState(0)
-  const [revealed, setRevealed] = useState(false)
   const [done, setDone] = useState(false)
-  const [reviewed, setReviewed] = useState(0)
+  const [showOverlay, setShowOverlay] = useState(false)
 
-  const cards = child.cards
-  const card = cards[index]
-  const total = cards.length
+  const total = items.length
+  const item = items[index] || null
 
-  function handleReveal() {
-    setRevealed(true)
-    onReview(card.id)
-    setReviewed(r => r + 1)
+  function handlePrev() {
+    if (index > 0) setIndex(i => i - 1)
   }
 
   function handleNext() {
@@ -22,22 +23,27 @@ export default function StudyPage({ child, onBack, onReview }) {
       setDone(true)
     } else {
       setIndex(i => i + 1)
-      setRevealed(false)
-    }
-  }
-
-  function handlePrev() {
-    if (index > 0) {
-      setIndex(i => i - 1)
-      setRevealed(false)
     }
   }
 
   function handleRestart() {
     setIndex(0)
-    setRevealed(false)
     setDone(false)
-    setReviewed(0)
+  }
+
+  if (total === 0) {
+    return (
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <button className={styles.backHeaderBtn} onClick={onBack}>← 退出</button>
+        </header>
+        <div className={styles.emptyStudy}>
+          <div className={styles.emptyIcon}>🎉</div>
+          <p className={styles.emptyText}>今天没有需要复习的内容</p>
+          <button className={styles.backBtn} onClick={onBack}>返回</button>
+        </div>
+      </div>
+    )
   }
 
   if (done) {
@@ -45,20 +51,21 @@ export default function StudyPage({ child, onBack, onReview }) {
       <div className={styles.page}>
         <div className={styles.doneCard}>
           <div className={styles.doneEmoji}>🎉</div>
-          <h2 className={styles.doneTitle}>Amazing job, {child.name}!</h2>
-          <p className={styles.doneText}>
-            You studied all <strong>{total}</strong> cards!
-          </p>
+          <h2 className={styles.doneTitle}>太棒了，{child.name}！</h2>
+          <p className={styles.doneText}>今天的 <strong>{total}</strong> 条内容全部复习完成！</p>
           <div className={styles.doneBtns}>
             <button
               className={styles.restartBtn}
               style={{ background: child.color }}
               onClick={handleRestart}
             >
-              Study Again
+              再来一遍
             </button>
             <button className={styles.backBtn} onClick={onBack}>
-              Back to Cards
+              查看全部内容
+            </button>
+            <button className={styles.backBtnAlt} onClick={onBack}>
+              返回
             </button>
           </div>
         </div>
@@ -66,72 +73,97 @@ export default function StudyPage({ child, onBack, onReview }) {
     )
   }
 
+  const reviewDates = item ? getReviewDates(item.startDate) : []
+  const reviewIndex = reviewDates.indexOf(today)
+  const reviewLabel = reviewIndex >= 0 ? REVIEW_LABELS[reviewIndex] : ''
+  const progressPercent = ((index + 1) / total) * 100
+
   return (
     <div className={styles.page}>
+      {showOverlay && (
+        <div className={styles.overlay}>
+          <div className={styles.overlayInner}>
+            <div className={styles.overlayHeader}>
+              <span className={styles.overlayTitle}>今天全部内容</span>
+              <button className={styles.overlayClose} onClick={() => setShowOverlay(false)}>✕</button>
+            </div>
+            <div className={styles.overlayList}>
+              {items.map((it, i) => {
+                const rd = getReviewDates(it.startDate)
+                const ri = rd.indexOf(today)
+                const rl = ri >= 0 ? REVIEW_LABELS[ri] : ''
+                return (
+                  <div key={it.id} className={`${styles.overlayItem} ${i === index ? styles.overlayItemActive : ''}`}>
+                    <div className={styles.overlayItemHeader}>
+                      <span className={styles.overlayNum}>#{it.number}</span>
+                      <span className={styles.overlayReviewLabel}>{rl}</span>
+                    </div>
+                    <p className={styles.overlayItemTitle}>{it.title}</p>
+                    <p className={styles.overlayItemContent}>{it.content}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className={styles.header}>
-        <button className={styles.backHeaderBtn} onClick={onBack}>← Exit</button>
-        <div className={styles.progress}>
-          <div
-            className={styles.progressBar}
-            style={{
-              width: `${((index + (revealed ? 1 : 0)) / total) * 100}%`,
-              background: child.color,
-            }}
-          />
+        <button className={styles.backHeaderBtn} onClick={onBack}>← 退出</button>
+        <div className={styles.progressWrap}>
+          <div className={styles.progressTrack}>
+            <div
+              className={styles.progressBar}
+              style={{ width: `${progressPercent}%`, background: child.color }}
+            />
+          </div>
+          <div className={styles.dots}>
+            {items.map((_, i) => (
+              <div
+                key={i}
+                className={`${styles.dot} ${i === index ? styles.dotActive : ''} ${i < index ? styles.dotDone : ''}`}
+                style={i === index ? { background: child.color } : {}}
+              />
+            ))}
+          </div>
         </div>
         <span className={styles.progressText}>{index + 1} / {total}</span>
+        <button
+          className={styles.testBtn}
+          style={{ borderColor: child.color, color: child.color }}
+          onClick={() => setShowOverlay(true)}
+        >
+          测试
+        </button>
       </header>
 
       <main className={styles.main}>
-        <div
-          className={`${styles.flashcard} ${revealed ? styles.revealed : ''}`}
-          key={card.id}
-        >
-          <div className={styles.cardLabel}>
-            {revealed ? 'Read & Remember:' : 'What do you know about...'}
+        <div className={styles.flashcard} key={item.id}>
+          <div className={styles.cardMeta}>
+            <span className={styles.cardNum}>#{item.number}</span>
+            <span className={styles.cardReviewLabel}>{reviewLabel}</span>
           </div>
-          <h2 className={styles.cardTitle}>{card.title}</h2>
-
-          {revealed ? (
-            <div className={styles.cardContent}>
-              <p className={styles.cardText}>{card.text}</p>
-            </div>
-          ) : (
-            <button
-              className={styles.revealBtn}
-              style={{ background: child.color }}
-              onClick={handleReveal}
-            >
-              Show me! ✨
-            </button>
-          )}
+          <h2 className={styles.cardTitle}>{item.title}</h2>
+          <div className={styles.cardContent}>
+            <p className={styles.cardText}>{item.content}</p>
+          </div>
         </div>
 
-        {revealed && (
-          <div className={styles.navRow}>
-            {index > 0 && (
-              <button className={styles.navBtn} onClick={handlePrev}>
-                ← Previous
-              </button>
-            )}
-            <button
-              className={styles.nextBtn}
-              style={{ background: child.color }}
-              onClick={handleNext}
-            >
-              {index + 1 >= total ? 'Finish! 🎉' : 'Next →'}
-            </button>
-          </div>
-        )}
-
-        <div className={styles.dots}>
-          {cards.map((_, i) => (
-            <div
-              key={i}
-              className={`${styles.dot} ${i === index ? styles.dotActive : ''} ${i < index ? styles.dotDone : ''}`}
-              style={i === index ? { background: child.color } : {}}
-            />
-          ))}
+        <div className={styles.navRow}>
+          <button
+            className={`${styles.navBtn} ${index === 0 ? styles.navBtnDisabled : ''}`}
+            onClick={handlePrev}
+            disabled={index === 0}
+          >
+            ◀ 上一条
+          </button>
+          <button
+            className={styles.nextBtn}
+            style={{ background: child.color }}
+            onClick={handleNext}
+          >
+            {index + 1 >= total ? '完成 🎉' : '下一条 ▶'}
+          </button>
         </div>
       </main>
     </div>

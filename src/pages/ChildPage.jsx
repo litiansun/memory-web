@@ -3,15 +3,21 @@ import styles from './ChildPage.module.css'
 import { todayStr, addDays, getReviewDates, getItemsForDate, displayDate } from '../storage.js'
 
 const REVIEW_LABELS = ['初次学习', '第1次复习', '第2次复习', '第3次复习', '第4次复习', '第5次复习', '第6次复习']
-const DATE_OFFSETS = [0, 1, 2, 3, 4]
 
 export default function ChildPage({ child, onBack, onStudy, onAddItem, onUpdateItem, onDeleteItem }) {
   const [tab, setTab] = useState('today')
   const today = todayStr()
 
+  const tabs = [
+    { key: 'today', label: '今天' },
+    { key: 'all', label: '全部内容' },
+    { key: 'preview', label: '60天预览' },
+    { key: 'add', label: '＋新内容' },
+  ]
+
   return (
     <div className={styles.page}>
-      <header className={styles.header} style={{ '--child-color': child.color }}>
+      <header className={styles.header}>
         <div className={styles.headerTop}>
           <button className={styles.backBtn} onClick={onBack}>← 返回</button>
           <div className={styles.childInfo}>
@@ -22,23 +28,17 @@ export default function ChildPage({ child, onBack, onStudy, onAddItem, onUpdateI
           </div>
           <button
             className={styles.studyBtn}
-            style={{ background: child.color }}
             onClick={onStudy}
           >
             ▶ 开始记忆
           </button>
         </div>
         <nav className={styles.tabBar}>
-          {[
-            { key: 'today', label: '今天' },
-            { key: 'all', label: '全部内容' },
-            { key: 'preview', label: '60天预览' },
-            { key: 'add', label: '＋新内容' },
-          ].map(t => (
+          {tabs.map(t => (
             <button
               key={t.key}
               className={`${styles.tab} ${tab === t.key ? styles.tabActive : ''}`}
-              style={tab === t.key ? { color: child.color, borderColor: child.color } : {}}
+              style={tab === t.key ? { color: child.color, borderBottomColor: child.color } : {}}
               onClick={() => setTab(t.key)}
             >
               {t.label}
@@ -48,24 +48,32 @@ export default function ChildPage({ child, onBack, onStudy, onAddItem, onUpdateI
       </header>
 
       <main className={styles.main}>
-        {tab === 'today' && (
-          <TodayTab child={child} today={today} />
-        )}
+        {tab === 'today' && <TodayTab child={child} today={today} color={child.color} />}
         {tab === 'all' && (
-          <AllTab child={child} today={today} onUpdateItem={onUpdateItem} onDeleteItem={onDeleteItem} />
+          <AllTab
+            child={child}
+            today={today}
+            color={child.color}
+            onUpdateItem={onUpdateItem}
+            onDeleteItem={onDeleteItem}
+          />
         )}
-        {tab === 'preview' && (
-          <PreviewTab child={child} today={today} />
-        )}
+        {tab === 'preview' && <PreviewTab child={child} today={today} color={child.color} />}
         {tab === 'add' && (
-          <AddTab child={child} today={today} onAddItem={onAddItem} onDone={() => setTab('today')} />
+          <AddTab
+            child={child}
+            today={today}
+            color={child.color}
+            onAddItem={onAddItem}
+            onDone={() => setTab('today')}
+          />
         )}
       </main>
     </div>
   )
 }
 
-function TodayTab({ child, today }) {
+function TodayTab({ child, today, color }) {
   const items = getItemsForDate(child.items, today)
 
   if (items.length === 0) {
@@ -85,10 +93,12 @@ function TodayTab({ child, today }) {
         const reviewIndex = reviewDates.indexOf(today)
         const label = reviewIndex >= 0 ? REVIEW_LABELS[reviewIndex] : ''
         return (
-          <div key={item.id} className={styles.todayCard}>
+          <div key={item.id} className={styles.todayCard} style={{ borderLeftColor: color }}>
             <div className={styles.todayCardHeader}>
-              <span className={styles.itemNumber}>#{item.number}</span>
-              <span className={styles.reviewLabel}>{label}</span>
+              <span className={styles.itemNumber} style={{ color }}>#{item.number}</span>
+              <span className={styles.reviewLabel} style={{ background: color + '22', color }}>
+                {label}
+              </span>
             </div>
             <h3 className={styles.todayTitle}>{item.title}</h3>
             <p className={styles.todayContent}>{item.content}</p>
@@ -99,7 +109,7 @@ function TodayTab({ child, today }) {
   )
 }
 
-function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
+function AllTab({ child, today, color, onUpdateItem, onDeleteItem }) {
   const [expanded, setExpanded] = useState(null)
   const [editing, setEditing] = useState(null)
   const [deleting, setDeleting] = useState(null)
@@ -127,7 +137,7 @@ function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
       <div className={styles.empty}>
         <div className={styles.emptyIcon}>📚</div>
         <p className={styles.emptyText}>还没有任何内容</p>
-        <p className={styles.emptySubtext}>切换到"＋新内容"添加第一条！</p>
+        <p className={styles.emptySubtext}>切换到「＋新内容」添加第一条！</p>
       </div>
     )
   }
@@ -141,15 +151,19 @@ function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
         const isDeleting = deleting === item.id
 
         return (
-          <div key={item.id} className={`${styles.allItem} ${isExpanded ? styles.allItemExpanded : ''}`}>
+          <div
+            key={item.id}
+            className={`${styles.allItem} ${isExpanded ? styles.allItemExpanded : ''}`}
+          >
             <button
               className={styles.allItemRow}
               onClick={() => {
                 if (isEditing) return
                 setExpanded(isExpanded ? null : item.id)
+                if (isDeleting) setDeleting(null)
               }}
             >
-              <span className={styles.allItemNumber}>#{item.number}</span>
+              <span className={styles.allItemNumber} style={{ color }}>#{item.number}</span>
               <span className={styles.allItemTitle}>{item.title}</span>
               <span className={styles.allItemChevron}>{isExpanded ? '▲' : '▼'}</span>
             </button>
@@ -169,7 +183,11 @@ function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
                           <span className={styles.reviewDateLabel}>{REVIEW_LABELS[idx]}</span>
                           <span className={styles.reviewDateValue}>{displayDate(date)}</span>
                           {isPast && <span className={styles.reviewDateCheck}>✓</span>}
-                          {isToday && <span className={styles.reviewDateToday}>今天</span>}
+                          {isToday && (
+                            <span className={styles.reviewDateToday} style={{ background: color }}>
+                              今天
+                            </span>
+                          )}
                         </div>
                       )
                     })}
@@ -181,21 +199,26 @@ function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
                     <span className={styles.confirmText}>确定删除这条内容？</span>
                     <button
                       className={styles.confirmYes}
-                      onClick={() => { onDeleteItem(item.id); setDeleting(null); setExpanded(null) }}
+                      onClick={() => {
+                        onDeleteItem(item.id)
+                        setDeleting(null)
+                        setExpanded(null)
+                      }}
                     >
                       删除
                     </button>
-                    <button
-                      className={styles.confirmNo}
-                      onClick={() => setDeleting(null)}
-                    >
+                    <button className={styles.confirmNo} onClick={() => setDeleting(null)}>
                       取消
                     </button>
                   </div>
                 ) : (
                   <div className={styles.itemActions}>
-                    <button className={styles.editBtn} onClick={() => startEdit(item)}>编辑</button>
-                    <button className={styles.deleteBtn} onClick={() => setDeleting(item.id)}>删除</button>
+                    <button className={styles.editBtn} onClick={() => startEdit(item)}>
+                      编辑
+                    </button>
+                    <button className={styles.deleteItemBtn} onClick={() => setDeleting(item.id)}>
+                      删除
+                    </button>
                   </div>
                 )}
               </div>
@@ -226,8 +249,16 @@ function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
                   onChange={e => setEditDate(e.target.value)}
                 />
                 <div className={styles.editActions}>
-                  <button className={styles.saveBtn} onClick={() => saveEdit(item.id)}>保存</button>
-                  <button className={styles.cancelBtn} onClick={() => setEditing(null)}>取消</button>
+                  <button
+                    className={styles.saveBtn}
+                    style={{ background: color }}
+                    onClick={() => saveEdit(item.id)}
+                  >
+                    保存
+                  </button>
+                  <button className={styles.cancelBtn} onClick={() => setEditing(null)}>
+                    取消
+                  </button>
                 </div>
               </div>
             )}
@@ -238,25 +269,37 @@ function AllTab({ child, today, onUpdateItem, onDeleteItem }) {
   )
 }
 
-function PreviewTab({ child, today }) {
+function PreviewTab({ child, today, color }) {
   const days = Array.from({ length: 60 }, (_, i) => addDays(today, i))
 
   return (
     <div className={styles.previewList}>
-      {days.map((dateStr, i) => {
+      {days.map(dateStr => {
         const items = getItemsForDate(child.items, dateStr)
         const isToday = dateStr === today
         return (
-          <div key={dateStr} className={`${styles.previewRow} ${isToday ? styles.previewRowToday : ''}`}>
+          <div
+            key={dateStr}
+            className={`${styles.previewRow} ${isToday ? styles.previewRowToday : ''}`}
+            style={isToday ? { borderLeftColor: color, background: color + '12' } : {}}
+          >
             <span className={styles.previewDate}>
-              {isToday ? <strong>{displayDate(dateStr)} 今天</strong> : displayDate(dateStr)}
+              {isToday ? (
+                <strong style={{ color }}>{displayDate(dateStr)} 今天</strong>
+              ) : (
+                displayDate(dateStr)
+              )}
             </span>
             <div className={styles.previewChips}>
               {items.length === 0 ? (
                 <span className={styles.previewEmpty}>—</span>
               ) : (
                 items.map(item => (
-                  <span key={item.id} className={styles.previewChip}>
+                  <span
+                    key={item.id}
+                    className={styles.previewChip}
+                    style={{ background: color + '22', color }}
+                  >
                     #{item.number}
                   </span>
                 ))
@@ -269,7 +312,7 @@ function PreviewTab({ child, today }) {
   )
 }
 
-function AddTab({ child, today, onAddItem, onDone }) {
+function AddTab({ child, today, color, onAddItem, onDone }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [dateOffset, setDateOffset] = useState(0)
@@ -308,7 +351,7 @@ function AddTab({ child, today, onAddItem, onDone }) {
       <label className={styles.addLabel}>内容</label>
       <textarea
         className={styles.addTextarea}
-        placeholder="例如：太阳系有八大行星：水星、金星、地球、火星、木星、土星、天王星、海王星。"
+        placeholder="例如：太阳系有八大行星：水星、金星、地球…"
         value={content}
         onChange={e => { setContent(e.target.value); setError('') }}
         rows={5}
@@ -317,15 +360,15 @@ function AddTab({ child, today, onAddItem, onDone }) {
 
       <label className={styles.addLabel}>开始日期</label>
       <div className={styles.dateBtns}>
-        {DATE_LABELS.map((label, i) => (
+        {DATE_LABELS.map((lbl, i) => (
           <button
             key={i}
             type="button"
             className={`${styles.dateBtn} ${dateOffset === i ? styles.dateBtnActive : ''}`}
-            style={dateOffset === i ? { background: child.color, color: '#fff', borderColor: child.color } : {}}
+            style={dateOffset === i ? { background: color, color: '#fff', borderColor: color } : {}}
             onClick={() => setDateOffset(i)}
           >
-            {label}
+            {lbl}
           </button>
         ))}
       </div>
@@ -334,7 +377,7 @@ function AddTab({ child, today, onAddItem, onDone }) {
 
       <button
         className={styles.addSubmitBtn}
-        style={{ background: child.color }}
+        style={{ background: color }}
         type="submit"
       >
         保存
