@@ -1,0 +1,75 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #fef9f0;
+  --color-surface: #ffffff;
+  --color-primary: #ff6b6b;
+  --color-primary-light: #ff8e8e;
+  --color-secondary: #4ecdc4;
+  --color-accent: #ffe66d;
+  --color-purple: #a855f7;
+  --color-text: #2d3748;
+  --color-text-muted: #718096;
+  --color-border: #e2e8f0;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);
+}
+
+body {
+  font-family: 'Segoe UI', 'Comic Sans MS', system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+/* Animations */
+@keyframes bounce-in {
+  0%   { transform: scale(0.7); opacity: 0; }
+  60%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes wiggle {
+  0%,100% { transform: rotate(0deg); }
+  25%     { transform: rotate(-5deg); }
+  75%     { transform: rotate(5deg); }
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes flip-in {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to   { transform: rotateY(0deg);  opacity: 1; }
+}
+
+.animate-bounce-in { animation: bounce-in 0.4s ease both; }
+.animate-slide-up  { animation: slide-up 0.3s ease both; }
+.animate-wiggle    { animation: wiggle 0.4s ease; }
+.animate-pop       { animation: pop 0.25s ease; }
