@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { loadData, saveData, addChild, deleteChild, addCard, deleteCard, incrementReview } from './storage.js'
+import { loadData, saveData, addChild, deleteChild, addItem, updateItem, deleteItem } from './storage.js'
 import HomePage from './pages/HomePage.jsx'
 import ChildPage from './pages/ChildPage.jsx'
 import StudyPage from './pages/StudyPage.jsx'
@@ -34,15 +34,15 @@ export default function App() {
           child={child}
           onBack={() => setRoute({ page: 'home', childId: null })}
           onStudy={() => setRoute({ page: 'study', childId: child.id })}
-          onAddCard={(title, text) => mutate(d => addCard(d, child.id, title, text))}
-          onDeleteCard={cardId => mutate(d => deleteCard(d, child.id, cardId))}
+          onAddItem={(payload) => mutate(d => addItem(d, child.id, payload))}
+          onUpdateItem={(itemId, payload) => mutate(d => updateItem(d, child.id, itemId, payload))}
+          onDeleteItem={(itemId) => mutate(d => deleteItem(d, child.id, itemId))}
         />
       )}
       {route.page === 'study' && child && (
         <StudyPage
           child={child}
           onBack={() => setRoute({ page: 'child', childId: child.id })}
-          onReview={cardId => mutate(d => incrementReview(d, child.id, cardId))}
         />
       )}
     </div>

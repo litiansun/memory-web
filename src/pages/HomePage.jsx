@@ -105,7 +105,7 @@ export default function HomePage({ children, onSelectChild, onAddChild, onDelete
                         </div>
                         <span className={styles.childName}>{child.name}</span>
                         <span className={styles.cardCount}>
-                          {child.cards.length} card{child.cards.length !== 1 ? 's' : ''}
+                          {child.items.length} 个内容
                         </span>
                       </button>
                     </>
