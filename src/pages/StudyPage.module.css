@@ -87,6 +87,19 @@
 }
 .testBtn:hover { background: rgba(255,255,255,0.08); }
 
+.shuffleBtn {
+  background: transparent;
+  border: 2px solid;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.shuffleBtn:hover { background: rgba(255,255,255,0.08); }
+.shuffleBtnActive { font-weight: 800; }
+
 .main {
   flex: 1;
   display: flex;

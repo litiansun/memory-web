@@ -2,7 +2,17 @@ import { useState } from 'react'
 import styles from './HomePage.module.css'
 import { AVATAR_COLORS } from '../storage.js'
 
-export default function HomePage({ children, onSelectChild, onAddChild, onDeleteChild }) {
+export default function HomePage({
+  children,
+  onSelectChild,
+  onAddChild,
+  onDeleteChild,
+  user,
+  guestMode,
+  isConfigured,
+  onSignOut,
+  onSignIn,
+}) {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState(null)
@@ -29,6 +39,32 @@ export default function HomePage({ children, onSelectChild, onAddChild, onDelete
             <h1 className={styles.title}>Memory Helper</h1>
             <p className={styles.subtitle}>Learn &amp; Remember with Fun!</p>
           </div>
+        </div>
+
+        <div className={styles.userArea}>
+          {user && (
+            <>
+              {user.photoURL && (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName || ''}
+                  className={styles.userAvatar}
+                  referrerPolicy="no-referrer"
+                />
+              )}
+              {user.displayName && (
+                <span className={styles.userName}>{user.displayName}</span>
+              )}
+              <button className={styles.signOutBtn} onClick={onSignOut}>
+                退出
+              </button>
+            </>
+          )}
+          {!user && guestMode && isConfigured && (
+            <button className={styles.signInBtn} onClick={onSignIn}>
+              登录同步
+            </button>
+          )}
         </div>
       </header>
 
