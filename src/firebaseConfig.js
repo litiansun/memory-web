@@ -1,10 +1,11 @@
 // Fill in your Firebase project config from https://console.firebase.google.com
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-}
+  apiKey: "AIzaSyDWIW0KnqNHgUfyuGaEUHRMy8xFFLinqdQ",
+  authDomain: "memory-web-471da.firebaseapp.com",
+  projectId: "memory-web-471da",
+  storageBucket: "memory-web-471da.firebasestorage.app",
+  messagingSenderId: "447893867766",
+  appId: "1:447893867766:web:9d2172fa01a5ef76fb30d7",
+  measurementId: "G-Y2T4QG8BD9"
+};
 export default firebaseConfig
