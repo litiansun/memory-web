@@ -1,0 +1,111 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fef9f0 0%, #fce4ec 50%, #e8f5e9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 28px;
+  padding: 48px 36px 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.logo {
+  font-size: 72px;
+  line-height: 1;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%,90%,100% { transform: rotate(0); }
+  92%         { transform: rotate(-8deg); }
+  96%         { transform: rotate(8deg); }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ff6b6b;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #718096;
+  margin-bottom: 36px;
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.15s;
+  margin-bottom: 12px;
+}
+
+.googleBtn:hover:not(:disabled) {
+  border-color: #4285F4;
+  box-shadow: 0 4px 16px rgba(66, 133, 244, 0.2);
+}
+
+.googleBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #e53e3e;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.guestBtn {
+  background: none;
+  border: none;
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+  transition: color 0.15s, background 0.15s;
+  margin-bottom: 16px;
+}
+
+.guestBtn:hover {
+  color: #4a5568;
+  background: #f7fafc;
+}
+
+.note {
+  font-size: 0.78rem;
+  color: #a0aec0;
+  line-height: 1.5;
+  max-width: 260px;
+}

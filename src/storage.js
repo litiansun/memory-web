@@ -106,3 +106,23 @@ export function deleteItem(data, childId, itemId) {
     ),
   }
 }
+
+export function bulkAddItems(data, childId, items) {
+  // items: [{title, content, startDate}]
+  return {
+    ...data,
+    children: data.children.map(c => {
+      if (c.id !== childId) return c
+      let nextNum = c.nextNumber
+      const newItems = items.map(({ title, content, startDate }) => ({
+        id: crypto.randomUUID(),
+        number: nextNum++,
+        title: title.trim(),
+        content: content.trim(),
+        startDate,
+        createdAt: Date.now(),
+      }))
+      return { ...c, items: [...c.items, ...newItems], nextNumber: nextNum }
+    }),
+  }
+}

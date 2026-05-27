@@ -1,18 +1,42 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import styles from './StudyPage.module.css'
 import { todayStr, getItemsForDate, getReviewDates } from '../storage.js'
 
 const REVIEW_LABELS = ['初次学习', '第1次复习', '第2次复习', '第3次复习', '第4次复习', '第5次复习', '第6次复习']
 
+function fisherYatesShuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export default function StudyPage({ child, onBack }) {
   const today = todayStr()
-  const items = getItemsForDate(child.items, today)
+  const originalItems = useMemo(() => getItemsForDate(child.items, today), [child.items, today])
+
   const [index, setIndex] = useState(0)
   const [done, setDone] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
+  const [isShuffled, setIsShuffled] = useState(false)
+  const [shuffledItems, setShuffledItems] = useState([])
 
+  const items = isShuffled ? shuffledItems : originalItems
   const total = items.length
   const item = items[index] || null
+
+  function handleToggleShuffle() {
+    if (!isShuffled) {
+      setShuffledItems(fisherYatesShuffle(originalItems))
+      setIsShuffled(true)
+    } else {
+      setIsShuffled(false)
+    }
+    setIndex(0)
+    setDone(false)
+  }
 
   function handlePrev() {
     if (index > 0) setIndex(i => i - 1)
@@ -134,6 +158,14 @@ export default function StudyPage({ child, onBack }) {
           onClick={() => setShowOverlay(true)}
         >
           测试
+        </button>
+        <button
+          className={`${styles.shuffleBtn} ${isShuffled ? styles.shuffleBtnActive : ''}`}
+          style={isShuffled ? { background: child.color, borderColor: child.color, color: 'white' } : { borderColor: child.color, color: child.color }}
+          onClick={handleToggleShuffle}
+          title={isShuffled ? '取消随机' : '随机排序'}
+        >
+          🔀
         </button>
       </header>
 

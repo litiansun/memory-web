@@ -60,6 +60,26 @@
   white-space: nowrap;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.exportBtn {
+  padding: 9px 14px;
+  background: #f0fff4;
+  color: #276749;
+  border: 1.5px solid #9ae6b4;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.exportBtn:hover { background: #c6f6d5; }
+
 .studyBtn {
   padding: 10px 18px;
   background: linear-gradient(135deg, #ffd700, #ff8c00);
@@ -571,3 +591,141 @@
 }
 .addSubmitBtn:hover  { opacity: 0.9; }
 .addSubmitBtn:active { transform: scale(0.98); }
+
+/* Import section */
+.importSection {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.09);
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.importTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0;
+}
+
+.importHint {
+  font-size: 0.82rem;
+  color: #a0aec0;
+  margin: 0;
+}
+
+.fileLabel {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileLabelText {
+  display: inline-block;
+  padding: 9px 18px;
+  background: #ebf8ff;
+  color: #2b6cb0;
+  border: 1.5px solid #bee3f8;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.fileLabel:hover .fileLabelText { background: #bee3f8; }
+
+.importError {
+  color: #e53e3e;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.previewBox {
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.previewCount {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4a5568;
+  margin: 0;
+}
+
+.previewRows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.previewItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+
+.previewItemTitle {
+  flex: 1;
+  color: #2d3748;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.previewItemDate {
+  color: #a0aec0;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.previewMore {
+  font-size: 0.82rem;
+  color: #a0aec0;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+.bulkImportBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  transition: opacity 0.15s;
+}
+.bulkImportBtn:hover { opacity: 0.9; }
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  color: #a0aec0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.orDivider::before,
+.orDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
